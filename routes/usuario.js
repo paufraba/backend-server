@@ -1,7 +1,7 @@
 var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-var SEED = require('../config/config').SEED;
+var midAutenticacion = require('../middlewares/autenticacion');
 
 // Inicializar variables
 var app = express();
@@ -30,29 +30,11 @@ app.get('/', (request, response, next) => {
             })
 });
 
-// **************************************************
-// Verificar token
-// **************************************************
-app.use('/', (request, response, next) => {
-    var token = request.query.token;
-    jwt.verify(token, SEED, (err, decoded) => {
-        if (err) {
-            return response.status(401).json({
-                ok: false,
-                mensaje: 'Token inválido',
-                errors: err
-            });
-        }
-
-        next();
-    });
-
-});
 
 // **************************************************
 // POST Usuario
 // **************************************************
-app.post('/', (request, response) => {
+app.post('/', midAutenticacion.verificaToken, (request, response) => {
     var body = request.body;
     var usuario = new Usuario({
         nombre: body.nombre,
@@ -73,7 +55,8 @@ app.post('/', (request, response) => {
 
         response.status(201).json({
             ok: true,
-            usuario: usuarioBBDD
+            usuario: usuarioBBDD,
+            usuarioToken: request.usuario
         });
     });
 });
@@ -81,7 +64,7 @@ app.post('/', (request, response) => {
 // **************************************************
 // PUT usuario
 // **************************************************
-app.put('/:id', (request, response) => {
+app.put('/:id', midAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
@@ -128,7 +111,7 @@ app.put('/:id', (request, response) => {
 // **************************************************
 // DEL usuario
 // **************************************************
-app.delete('/:id', (request, response) => {
+app.delete('/:id', midAutenticacion.verificaToken, (request, response) => {
     var id = request.params.id;
 
     Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
