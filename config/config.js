@@ -1,0 +1,1 @@
+module.exports.SEED = 'Semilla para la generación~~###';
