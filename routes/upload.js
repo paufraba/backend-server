@@ -145,6 +145,14 @@ function subirPorTipo(tipo, id, nombreArchivo, response) {
             break;
         case 'usuarios':
             Usuario.findById(id, (err, usuario) => {
+                if (!usuario) {
+                    return response.status(400).json({
+                        ok: false,
+                        mensaje: 'El usuario con el id ' + id + ' no existe',
+                        errors: { message: 'No existe un usuario con ese ID' }
+                    });
+                }
+
                 //Borrar imagen vieja
                 var oldPath = './uploads/usuarios/' + usuario.img;
 
@@ -154,6 +162,8 @@ function subirPorTipo(tipo, id, nombreArchivo, response) {
 
                 usuario.img = nombreArchivo;
                 usuario.save((err, usuarioBBDD) => {
+                    usuarioBBDD.password = ':)';
+
                     return response.status(200).json({
                         ok: true,
                         mensaje: 'Imágen actualizada',
