@@ -18,7 +18,7 @@ app.use(bodyParser.json())
 
 
 // Conexión BBDD
-mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', { useNewUrlParser: true }, (err, res) => {
+mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', { useCreateIndex: true, useNewUrlParser: true }, (err, res) => {
     if (err) {
         console.error('Conexión a la base de datos: ' + chalk.red('KO'));
 

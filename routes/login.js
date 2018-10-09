@@ -2,10 +2,63 @@ var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var SEED = require('../config/config').SEED;
+var Usuario = require('../models/usuario');
+const { OAuth2Client } = require('google-auth-library');
+var CLIENT_ID = require('../config/config').CLIENT_ID;
+// var SECRET = require('../config/config').SECRET;
+const chalk = require('chalk');
 
 // Inicializar variables
 var app = express();
-var Usuario = require('../models/usuario');
+const client = new OAuth2Client(CLIENT_ID);
+
+// **************************************************
+// Autenticación Google
+// **************************************************
+async function verify(token) {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    // const userid = payload['sub'];
+    // If request specified a G Suite domain:
+    //const domain = payload['hd'];
+
+    return {
+        nombre: payload.name,
+        email: payload.email,
+        img: payload.picture,
+        google: true
+    }
+}
+
+app.post('/google', async (request, response) => {
+    var token = request.body.token || '';
+
+    await verify(token)
+        .then(data => {
+            return response.status(200).send({
+                ok: true,
+                mensaje: 'OK',
+                data
+            });
+        })
+        .catch(err => {
+            console.error(chalk.red('Se ha producido un error:'), err);
+
+            return response.status(403).send({
+                ok: false,
+                mensaje: 'Token no válido',
+                errors: err.message
+            });
+        });
+});
+
+// **************************************************
+// Autenticación normal
+// **************************************************
 
 app.post('/', (request, response) => {
     var body = request.body;
