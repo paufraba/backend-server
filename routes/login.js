@@ -39,11 +39,75 @@ app.post('/google', async (request, response) => {
 
     await verify(token)
         .then(data => {
-            return response.status(200).send({
-                ok: true,
-                mensaje: 'OK',
-                data
+            Usuario.findOne({ email: data.email }, (err, usuarioBBDD) => {
+                if (err) {
+                    return response.status(500).json({
+                        ok: false,
+                        mensaje: 'Error buscando usuario',
+                        errors: err
+                    });
+                }
+
+                if (usuarioBBDD) {
+                    if (!usuarioBBDD.google) {
+                        return response.status(400).json({
+                            ok: false,
+                            mensaje: 'Debe usar su autenticación normal'
+                        });
+                    } else {
+                        //Crear token
+                        var token = jwt.sign(
+                            { usuario: usuarioBBDD },
+                            SEED,
+                            { expiresIn: 14400 });
+
+                        response.status(200).json({
+                            ok: true,
+                            usuario: usuarioBBDD,
+                            token: token,
+                            id: usuarioBBDD.id
+                        });
+                    }
+                } else {
+                    //Crear usuario
+                    var usuario = new Usuario();
+
+                    usuario.nombre = data.nombre;
+                    usuario.email = data.email;
+                    usuario.img = data.img;
+                    usuario.google = true;
+                    usuario.password = ':)';
+
+                    usuario.save((err, usuarioGuardado) => {
+                        if (err) {
+                            return response.status(400).json({
+                                ok: false,
+                                mensaje: 'Error creando usuario',
+                                errors: err
+                            });
+                        }
+
+                        //Crear token
+                        var token = jwt.sign(
+                            { usuario: usuarioGuardado },
+                            SEED,
+                            { expiresIn: 14400 });
+
+                        response.status(200).json({
+                            ok: true,
+                            usuario: usuarioGuardado,
+                            token: token,
+                            id: usuarioGuardado.id
+                        });
+                    });
+                }
             });
+
+            // return response.status(200).send({
+            //     ok: true,
+            //     mensaje: 'OK',
+            //     data
+            // });
         })
         .catch(err => {
             console.error(chalk.red('Se ha producido un error:'), err);
