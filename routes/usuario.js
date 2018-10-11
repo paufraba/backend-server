@@ -41,7 +41,7 @@ app.get('/', (request, response, next) => {
 // **************************************************
 // POST Usuario
 // **************************************************
-app.post('/', midAutenticacion.verificaToken, (request, response) => {
+app.post('/', (request, response) => {
     var body = request.body;
     var usuario = new Usuario({
         nombre: body.nombre,

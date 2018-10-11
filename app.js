@@ -3,13 +3,25 @@ var express = require('express');
 const chalk = require('chalk');
 var mongoose = require('mongoose');
 var setTitle = require('console-title');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var cors = require('cors');
 
 
 // Inicializar variables
 var app = express();
 const puerto = 3000;
 setTitle('Servidor REST');
+
+// CORS
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+//     next();
+// });
+app.use(cors());
+// Activar Pre-Flight
+app.options('*', cors());
 
 //Body parser
 // parse application/x-www-form-urlencoded
