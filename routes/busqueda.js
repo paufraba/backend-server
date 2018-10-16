@@ -7,7 +7,7 @@ var Usuario = require('../models/usuario');
 var app = express();
 
 // **************************************************
-// Bñusqueda general
+// Búsqueda general
 // **************************************************
 app.get('/todo/:texto', (request, response, next) => {
     var texto = request.params.texto;
@@ -35,15 +35,15 @@ app.get('/coleccion/:tabla/:texto', (request, response) => {
     var promesa;
 
     switch (tabla) {
-        case 'medico':
+        case 'medicos':
             promesa = buscarMedicos(texto, regex);
 
             break;
-        case 'hospital':
+        case 'hospitales':
             promesa = buscarHospitales(texto, regex);
 
             break;
-        case 'usuario':
+        case 'usuarios':
             promesa = buscarUsuarios(texto, regex);
 
             break;
