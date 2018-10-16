@@ -68,6 +68,7 @@ app.use('/', appRoutes);
 
 // Escuchar peticiones
 app.listen(puerto, () => {
-    console.log('Express server arrancado en el puerto ' + chalk.blue(puerto) + ': ' + chalk.green('OK'));
+    var timestamp = '[' + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + ']';
+    console.log(timestamp, 'Express server arrancado en el puerto ' + chalk.blue(puerto) + ': ' + chalk.green('OK'));
 
 })
