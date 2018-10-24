@@ -71,7 +71,7 @@ app.post('/', (request, response) => {
 // **************************************************
 // PUT usuario
 // **************************************************
-app.put('/:id', midAutenticacion.verificaToken, (request, response) => {
+app.put('/:id', [midAutenticacion.verificaToken, midAutenticacion.verificaAdminMismoUsuario], (request, response) => {
     var id = request.params.id;
     var body = request.body;
 
@@ -118,7 +118,7 @@ app.put('/:id', midAutenticacion.verificaToken, (request, response) => {
 // **************************************************
 // DEL usuario
 // **************************************************
-app.delete('/:id', midAutenticacion.verificaToken, (request, response) => {
+app.delete('/:id', [midAutenticacion.verificaToken, midAutenticacion.verificaAdmin], (request, response) => {
     var id = request.params.id;
 
     Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
