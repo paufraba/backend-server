@@ -54,9 +54,8 @@ exports.verificaAdminMismoUsuario = function (request, response, next) {
     var usuario = request.usuario;
     var id = request.params.id;
 
-    console.log('ID:', id);
-    console.log('Usuario ID:', usuario._id);
-
+    // console.log('ID:', id);
+    // console.log('Usuario ID:', usuario._id);
 
     if (usuario.role === 'ADMIN_ROLE' || usuario._id === id) {
         next();
