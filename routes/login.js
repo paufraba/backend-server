@@ -5,12 +5,25 @@ var SEED = require('../config/config').SEED;
 var Usuario = require('../models/usuario');
 const { OAuth2Client } = require('google-auth-library');
 var CLIENT_ID = require('../config/config').CLIENT_ID;
-// var SECRET = require('../config/config').SECRET;
 const chalk = require('chalk');
+var midAutenticacion = require('../middlewares/autenticacion');
 
 // Inicializar variables
 var app = express();
 const client = new OAuth2Client(CLIENT_ID);
+
+// **************************************************
+// Renovar token
+// **************************************************
+app.get('/renovartoken', midAutenticacion.verificaToken, (request, response) => {
+    //Crear token
+    var token = jwt.sign({ usuario: request.usuario }, SEED, { expiresIn: 14400 });
+
+    response.status(200).json({
+        ok: true,
+        token
+    });
+});
 
 // **************************************************
 // Autenticación Google
